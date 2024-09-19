@@ -171,19 +171,41 @@ app.get('/index', isAuthenticated, (req, res) => {
 
 // Chat page
 app.get("/chatpage", isAuthenticated, async (req, res) => {
-  let chatSession;
-  if (req.query.sessionId) {
-    chatSession = await ChatSession.findById(req.query.sessionId);
-  } else {
-    chatSession = new ChatSession({
-      userId: req.user._id,
-      startTime: new Date(),
-      endTime: null
-    });
-    await chatSession.save();
-  }
-  res.render("chatpage", { user: req.user, sessionId: chatSession._id });
-});
+    let chatSession;
+  
+    try {
+      // Check if sessionId is provided as a query parameter
+      if (req.query.sessionId) {
+        chatSession = await ChatSession.findById(req.query.sessionId);
+  
+        // Handle case where session is not found
+        if (!chatSession) {
+          return res.status(404).send('Chat session not found');
+        }
+      } else {
+        // Create a new chat session if none exists
+        chatSession = new ChatSession({
+          userId: req.user._id,
+          startTime: new Date(),
+          endTime: null
+        });
+        await chatSession.save();
+      }
+  
+      // Fetch chats associated with this session and sort by timestamp
+      const chats = await Chat.find({ sessionId: chatSession._id }).sort('timestamp');
+  
+      // Render the chat page and pass chat history and sessionId
+      res.render("chatpage", { user: req.user, sessionId: chatSession._id, chats });
+  
+    } catch (err) {
+      console.error('Error retrieving or creating chat session:', err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+  
+  
+  
 
 // Chat post request
 app.post("/chat", isAuthenticated, async (req, res) => {
@@ -250,13 +272,17 @@ app.post('/history/delete', isAuthenticated, async (req, res) => {
 
 // Resume chat history
 app.post('/history/resume', isAuthenticated, async (req, res) => {
-  const { sessionId } = req.body;
-  const chatSession = await ChatSession.findById(sessionId);
-  if (!chatSession || chatSession.userId.toString() !== req.user._id.toString()) {
-    return res.status(403).send('Unauthorized');
-  }
-  res.redirect(`/chatpage?sessionId=${sessionId}`);
-});
+    const { sessionId } = req.body;
+    const chatSession = await ChatSession.findById(sessionId);
+    
+    if (!chatSession || chatSession.userId.toString() !== req.user._id.toString()) {
+      return res.status(403).send('Unauthorized');
+    }
+  
+    // Redirect to chat page with the session ID
+    res.redirect(`/chatpage?sessionId=${sessionId}`);
+  });
+  
 
 // Logout route
 app.get('/logout', (req, res) => {

@@ -28,7 +28,15 @@
         const userInput = document.getElementById('user-input');
         const homeButton = document.getElementById('home-button');
         const sessionId = '<%= sessionId %>'; // Assume this is passed from the server
-
+    
+        // Pre-load chat history (passed from server)
+        const chatHistory = <%- JSON.stringify(chats) %>;
+    
+        // Render chat history
+        chatHistory.forEach(chat => {
+            addMessage(chat.sender, chat.message);
+        });
+    
         chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const message = userInput.value.trim();
@@ -37,7 +45,7 @@
                 userInput.value = '';
             }
         });
-
+    
         async function sendMessage(message) {
             addMessage('You', message);
             try {
@@ -56,7 +64,7 @@
                 console.error('Error:', error);
             }
         }
-
+    
         function addMessage(sender, text) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `p-2 rounded-lg ${sender === 'You' ? 'bg-neutral-600 text-zinc-300 ml-auto' : 'bg-gray-200 text-gray-800'}`;
@@ -65,7 +73,7 @@
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-
+    
         // End chat session when leaving the page
         window.addEventListener('beforeunload', async () => {
             await fetch('/end-chat', {
@@ -76,11 +84,12 @@
                 body: JSON.stringify({ sessionId }),
             });
         });
-
+    
         // Add event listener to Home button
         homeButton.addEventListener('click', () => {
             window.history.back(); // Go to the previous page
         });
     </script>
+    
 </body>
 </html>
