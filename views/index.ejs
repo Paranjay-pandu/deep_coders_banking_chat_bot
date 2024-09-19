@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +11,7 @@
             margin: 0;
             box-sizing: border-box;
         }
-
+        
         body,
         html {
             height: 100%;
@@ -20,29 +19,28 @@
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
         }
-
+        
         #hero-section {
             margin-top: 50px;
             text-align: center;
         }
-
+        
         #chat-button a {
             font-size: 18px;
             font-weight: bold;
             transition: background-color 0.3s ease-in-out;
         }
-
+        
         #chat-button a:hover {
             background-color: #4a5568;
             color: white;
         }
     </style>
 </head>
-
 <body>
     <!-- Include Header -->
-    <%- include("header.ejs") %>
-
+    <%- include("header") %>
+    
     <!-- Hero Section -->
     <div id="hero-section">
         <!-- Dynamically show username -->
@@ -54,13 +52,11 @@
             However, I'm still learning, so I'll be answering your banking queries through text only for now :)
         </p>
     </div>
-
+    
     <!-- Chat Button -->
     <div id="chat-button" class="flex justify-center">
         <a class="relative text-center px-3 py-2 my-10 bg-gray-400 rounded-md hover:bg-gray-600"
-            href="/chatpage">Chat Now</a>
+           href="/chatpage">Chat Now</a>
     </div>
-
 </body>
-
 </html>

@@ -116,7 +116,7 @@ passport.authenticate('local', (err, user, info) => {
     
     req.logIn(user, (err) => {
     if (err) return next(err);
-    req.flash('success', 'You have logged in successfully'); // Add flash message for success
+    req.flash('success', 'You have registered successfully'); // Add flash message for success
     return res.redirect('/'); // Change this to the appropriate redirect URL
     });
 })(req, res, next);
@@ -128,46 +128,78 @@ app.get('/register', (req, res) => {
   res.render("register");
 });
 
-app.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+const { body, validationResult } = require('express-validator');
 
-  // Check if the email already exists in the database
-  const userExists = await User.findOne({ email: email });
-
-  if (userExists) {
-    // Send back a response that email already exists
+app.post('/register', [
+  body('name').notEmpty().trim().withMessage('Name is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('no').isMobilePhone().withMessage('Valid phone number is required'),
+  body('bank_no').notEmpty().trim().withMessage('Bank account number is required'),
+  body('credit').isIn(['yes', 'no']).withMessage('Credit card information is required'),
+  body('debit').isIn(['yes', 'no']).withMessage('Debit card information is required'),
+  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
+  body('confirm_password').custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error('Password confirmation does not match password');
+    }
+    return true;
+  }),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
     return res.render('register', { 
-      error: 'Email already exists! Please login instead.'
+      error: errors.array()[0].msg,
+      formData: req.body
     });
   }
 
-  // Proceed with the rest of the registration logic
-  const newUser = new User({
-    email,
-    password: await bcrypt.hash(password, 10) // Hashing password
-  });
+  const { name, email, no, bank_no, credit, debit, password } = req.body;
 
-  await newUser.save();
-  res.redirect('/login'); // Redirect to login after successful registration
+  try {
+    // Check if the email already exists in the database
+    const userExists = await User.findOne({ email: email });
+
+    if (userExists) {
+      return res.render('register', { 
+        error: 'Email already exists! Please login instead.',
+        formData: req.body
+      });
+    }
+
+    // Proceed with the registration
+    const newUser = new User({
+      name,
+      email,
+      phoneNumber: no,
+      bankAccountNumber: bank_no,
+      hasCreditCard: credit === 'yes',
+      hasDebitCard: debit === 'yes',
+      password: await bcrypt.hash(password, 10) // Hashing password
+    });
+
+    await newUser.save();
+    res.redirect('/login'); // Redirect to login after successful registration
+  } catch (error) {
+    console.error(error);
+    res.render('register', { 
+      error: 'An error occurred during registration. Please try again.',
+      formData: req.body
+    });
+  }
 });
 
 // Home route (protected)
-app.get('/', (req, res) => {
-    if (req.isAuthenticated()) {
-      // Assuming req.user contains user information
-      const username = req.user.name; // Adjust this according to your user model
-      const chatbotName = "ChatBot"; // Define your chatbot name here
-      
-      res.render('index', { username, chatbotName });
-    } else {
-      res.redirect('/login');
-    }
-  });
+app.get('/', isAuthenticated, (req, res) => {
+  const username = req.user.name;
+  const chatbotName = "ChatBot"
   
-// Index route
-app.get('/index', isAuthenticated, (req, res) => {
-  res.render('index', { user: req.user }); // Passing user data to index page
+  res.render('index', { username, chatbotName });
 });
+  
+// // Index route
+// app.get('/index', isAuthenticated, (req, res) => {
+//   res.render('index', { user: req.user }); // Passing user data to index page
+// });
 
 // Chat page
 app.get("/chatpage", isAuthenticated, async (req, res) => {

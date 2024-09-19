@@ -17,9 +17,14 @@
 
         // Show an alert if there's an error message
         window.onload = function() {
-            if (typeof error !== 'undefined') {
+            <% if (typeof error !== 'undefined') { %>
                 alert("<%= error %>");
-            }
+            <% } %>
+            
+            // Show the appropriate form based on whether password fields are filled
+            <% if (typeof formData !== 'undefined' && (formData.password || formData.confirm_password)) { %>
+                showNextForm();
+            <% } %>
         }
     </script>
 </head>
@@ -29,24 +34,24 @@
             <h1 class="my-3 text-2xl font-semibold text-center text-gray-800">REGISTER</h1>
 
             <div id="initial-form" class="w-full flex flex-col items-center">
-                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="text" placeholder="Enter your full name" name="name" required>
-                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="email" placeholder="Enter your email" name="email" required>
-                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="tel" placeholder="+91 XXXXXXXXXX" name="no" required>
-                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="text" placeholder="Enter your bank acc no." name="bank_no" required>
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="text" placeholder="Enter your full name" name="name" required value="<%= typeof formData !== 'undefined' ? formData.name : '' %>">
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="email" placeholder="Enter your email" name="email" required value="<%= typeof formData !== 'undefined' ? formData.email : '' %>">
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="tel" placeholder="+91 XXXXXXXXXX" name="no" required value="<%= typeof formData !== 'undefined' ? formData.no : '' %>">
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="text" placeholder="Enter your bank acc no." name="bank_no" required value="<%= typeof formData !== 'undefined' ? formData.bank_no : '' %>">
 
                 <div id="creditcard" class="flex gap-2 items-center my-2">
                     <label for="credit" class="text-center text-gray-700">Do you have a credit card?</label>
-                    <input type="radio" id="credit-yes" name="credit" value="yes" required>
+                    <input type="radio" id="credit-yes" name="credit" value="yes" required <%= typeof formData !== 'undefined' && formData.credit === 'yes' ? 'checked' : '' %>>
                     <label for="credit-yes" class="text-gray-700">Yes</label>
-                    <input type="radio" id="credit-no" name="credit" value="no" required>
+                    <input type="radio" id="credit-no" name="credit" value="no" required <%= typeof formData !== 'undefined' && formData.credit === 'no' ? 'checked' : '' %>>
                     <label for="credit-no" class="text-gray-700">No</label>
                 </div>
 
                 <div id="debitcard" class="flex gap-2 items-center my-2">
                     <label for="debit" class="text-center text-gray-700">Do you have a debit card?</label>
-                    <input type="radio" id="debit-yes" name="debit" value="yes" required>
+                    <input type="radio" id="debit-yes" name="debit" value="yes" required <%= typeof formData !== 'undefined' && formData.debit === 'yes' ? 'checked' : '' %>>
                     <label for="debit-yes" class="text-gray-700">Yes</label>
-                    <input type="radio" id="debit-no" name="debit" value="no" required>
+                    <input type="radio" id="debit-no" name="debit" value="no" required <%= typeof formData !== 'undefined' && formData.debit === 'no' ? 'checked' : '' %>>
                     <label for="debit-no" class="text-gray-700">No</label>
                 </div>
 
