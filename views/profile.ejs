@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+        
+        body,
+        html {
+            height: 100%;
+            width: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        #profile-section {
+            margin-top: 50px;
+            text-align: center;
+        }
+        
+        #edit-button,
+        #save-button,
+        #cancel-button {
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+        }
+        
+        #edit-button:hover,
+        #save-button:hover,
+        #cancel-button:hover {
+            background-color: #4a5568;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Header -->
+    <%- include("header", { username: user.name, chatbotName: "ChatBot" }) %>
+    
+    <!-- Profile Section -->
+    <div id="profile-section" class="container mx-auto mt-8 p-4">
+        <h1 class="text-2xl font-light mb-4">Your Profile Information</h1>
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <div id="profile-info">
+                <p class="mb-2"><strong>Name:</strong> <span id="name"><%= user.name %></span></p>
+                <p class="mb-2"><strong>Email:</strong> <span id="email"><%= user.email %></span></p>
+                <p class="mb-2"><strong>Phone Number:</strong> <span id="phoneNumber"><%= user.phoneNumber %></span></p>
+                <p class="mb-2"><strong>Bank Account Number:</strong> <span id="bankAccountNumber"><%= user.bankAccountNumber %></span></p>
+                <p class="mb-2"><strong>Has Credit Card:</strong> <span id="hasCreditCard"><%= user.hasCreditCard ? 'Yes' : 'No' %></span></p>
+                <p class="mb-2"><strong>Has Debit Card:</strong> <span id="hasDebitCard"><%= user.hasDebitCard ? 'Yes' : 'No' %></span></p>
+            </div>
+            <div id="edit-form" class="hidden">
+                <form id="profile-form" class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="edit-name">Name</label>
+                        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="edit-name" type="text" value="<%= user.name %>">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="edit-email">Email</label>
+                        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="edit-email" type="email" value="<%= user.email %>">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="edit-phoneNumber">Phone Number</label>
+                        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="edit-phoneNumber" type="tel" value="<%= user.phoneNumber %>">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="edit-bankAccountNumber">Bank Account Number</label>
+                        <input class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="edit-bankAccountNumber" type="text" value="<%= user.bankAccountNumber %>">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="edit-hasCreditCard">Has Credit Card</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="edit-hasCreditCard">
+                            <option value="true" <%= user.hasCreditCard ? 'selected' : '' %>>Yes</option>
+                            <option value="false" <%= !user.hasCreditCard ? 'selected' : '' %>>No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="edit-hasDebitCard">Has Debit Card</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" id="edit-hasDebitCard">
+                            <option value="true" <%= user.hasDebitCard ? 'selected' : '' %>>Yes</option>
+                            <option value="false" <%= !user.hasDebitCard ? 'selected' : '' %>>No</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="mt-6 flex justify-center space-x-4">
+                <button id="edit-button" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50">Edit Profile</button>
+                <button id="save-button" class="hidden px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Save Changes</button>
+                <button id="cancel-button" class="hidden px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const editButton = document.getElementById('edit-button');
+        const saveButton = document.getElementById('save-button');
+        const cancelButton = document.getElementById('cancel-button');
+        const profileInfo = document.getElementById('profile-info');
+        const editForm = document.getElementById('edit-form');
+
+        editButton.addEventListener('click', () => {
+            profileInfo.classList.add('hidden');
+            editForm.classList.remove('hidden');
+            editButton.classList.add('hidden');
+            saveButton.classList.remove('hidden');
+            cancelButton.classList.remove('hidden');
+        });
+
+        cancelButton.addEventListener('click', () => {
+            profileInfo.classList.remove('hidden');
+            editForm.classList.add('hidden');
+            editButton.classList.remove('hidden');
+            saveButton.classList.add('hidden');
+            cancelButton.classList.add('hidden');
+        });
+
+        saveButton.addEventListener('click', async () => {
+            const name = document.getElementById('edit-name').value;
+            const email = document.getElementById('edit-email').value;
+            const phoneNumber = document.getElementById('edit-phoneNumber').value;
+            const bankAccountNumber = document.getElementById('edit-bankAccountNumber').value;
+            const hasCreditCard = document.getElementById('edit-hasCreditCard').value === 'true';
+            const hasDebitCard = document.getElementById('edit-hasDebitCard').value === 'true';
+
+            try {
+                const response = await axios.post('/edit-profile', {
+                    name,
+                    email,
+                    phoneNumber,
+                    bankAccountNumber,
+                    hasCreditCard,
+                    hasDebitCard
+                });
+
+                if (response.data.success) {
+                    // Update the profile info
+                    document.getElementById('name').textContent = name;
+                    document.getElementById('email').textContent = email;
+                    document.getElementById('phoneNumber').textContent = phoneNumber;
+                    document.getElementById('bankAccountNumber').textContent = bankAccountNumber;
+                    document.getElementById('hasCreditCard').textContent = hasCreditCard ? 'Yes' : 'No';
+                    document.getElementById('hasDebitCard').textContent = hasDebitCard ? 'Yes' : 'No';
+
+                    // Switch back to view mode
+                    profileInfo.classList.remove('hidden');
+                    editForm.classList.add('hidden');
+                    editButton.classList.remove('hidden');
+                    saveButton.classList.add('hidden');
+                    cancelButton.classList.add('hidden');
+
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Failed to update profile. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('An error occurred while updating the profile. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

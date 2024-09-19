@@ -190,11 +190,14 @@ app.post('/register', [
 
 // Home route (protected)
 app.get('/', isAuthenticated, (req, res) => {
-  const username = req.user.name;
-  const chatbotName = "ChatBot"
-  
-  res.render('index', { username, chatbotName });
+  // Extract user details
+  const username = req.user.name; // Assuming req.user has a 'name' property
+  const email = req.user.email;   // Assuming req.user has an 'email' property
+  const chatbotName = "ChatBot";
+  // Pass user details along with other data to the view
+  res.render('index', { username, chatbotName, user: req.user });
 });
+
   
 // // Index route
 // app.get('/index', isAuthenticated, (req, res) => {
@@ -316,10 +319,47 @@ app.post('/history/resume', isAuthenticated, async (req, res) => {
   });
   
 
-// Logout route
-app.get('/logout', (req, res) => {
-  req.logout();
-  res.redirect('/login');
+app.get('/logout', (req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/login');
+  });
+});
+
+app.get('/profile', isAuthenticated,(req, res)=>{
+  res.render("profile", {user: req.user})
+})
+
+app.post('/edit-profile', isAuthenticated, [
+  body('name').notEmpty().trim().withMessage('Name is required'),
+  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
+  body('phoneNumber').isMobilePhone().withMessage('Valid phone number is required'),
+  body('bankAccountNumber').notEmpty().trim().withMessage('Bank account number is required'),
+  body('hasCreditCard').isBoolean().withMessage('Credit card information is required'),
+  body('hasDebitCard').isBoolean().withMessage('Debit card information is required'),
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { name, email, phoneNumber, bankAccountNumber, hasCreditCard, hasDebitCard } = req.body;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.user._id, {
+      name,
+      email,
+      phoneNumber,
+      bankAccountNumber,
+      hasCreditCard,
+      hasDebitCard
+    }, { new: true });
+
+    res.json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'An error occurred while updating the profile.' });
+  }
 });
 
 // Start the server
