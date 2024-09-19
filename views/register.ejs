@@ -14,6 +14,13 @@
             document.getElementById('initial-form').classList.remove('hidden');
             document.getElementById('next-form').classList.add('hidden');
         }
+
+        // Show an alert if there's an error message
+        window.onload = function() {
+            if (typeof error !== 'undefined') {
+                alert("<%= error %>");
+            }
+        }
     </script>
 </head>
 <body class="bg-gray-100 h-screen flex items-center justify-center">

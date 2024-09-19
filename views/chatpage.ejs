@@ -6,7 +6,7 @@
     <title>Chatbot</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
+<body class="bg-gray-100 h-screen flex flex-col items-center justify-center">
     <div id="chatbot" class="w-full md:w-3/5 lg:w-2/5 mx-auto relative border border-black rounded-xl h-[80vh] flex flex-col overflow-hidden shadow-lg bg-white">
         <h1 class="text-2xl font-semibold text-center py-4 bg-neutral-600 text-zinc-300">Chatbot</h1>
         <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
@@ -17,13 +17,18 @@
             </div>
         </form>
     </div>
-    
+    <div class="mt-4 flex justify-between text-center w-full md:w-3/5 lg:w-2/5 mx-auto">
+        <button id="home-button" class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-800">back</button>
+        <a href="/history" class="bg-gray-600 text-white px-6 py-3 rounded-md hover:bg-gray-800">Save</a>
+    </div>
+
     <script>
         const chatMessages = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const userInput = document.getElementById('user-input');
+        const homeButton = document.getElementById('home-button');
         const sessionId = '<%= sessionId %>'; // Assume this is passed from the server
-    
+
         chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const message = userInput.value.trim();
@@ -32,7 +37,7 @@
                 userInput.value = '';
             }
         });
-    
+
         async function sendMessage(message) {
             addMessage('You', message);
             try {
@@ -51,7 +56,7 @@
                 console.error('Error:', error);
             }
         }
-    
+
         function addMessage(sender, text) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `p-2 rounded-lg ${sender === 'You' ? 'bg-neutral-600 text-zinc-300 ml-auto' : 'bg-gray-200 text-gray-800'}`;
@@ -60,7 +65,7 @@
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-    
+
         // End chat session when leaving the page
         window.addEventListener('beforeunload', async () => {
             await fetch('/end-chat', {
@@ -70,6 +75,11 @@
                 },
                 body: JSON.stringify({ sessionId }),
             });
+        });
+
+        // Add event listener to Home button
+        homeButton.addEventListener('click', () => {
+            window.history.back(); // Go to the previous page
         });
     </script>
 </body>

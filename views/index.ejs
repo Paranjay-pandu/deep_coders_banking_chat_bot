@@ -1,9 +1,11 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>chat bot</title>
+    <title>Chat Bot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
             padding: 0;
@@ -15,29 +17,50 @@
         html {
             height: 100%;
             width: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        #hero-section {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        #chat-button a {
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #chat-button a:hover {
+            background-color: #4a5568;
+            color: white;
         }
     </style>
 </head>
 
 <body>
+    <!-- Include Header -->
     <%- include("header.ejs") %>
-        <div id="hero-section">
-            <h1 class="px-16 mt-10 text-2xl font-lighter">Hi, username</h1>
-            <p class="px-24 my-2 text-lg font-lighter">i am chatbot name a virtual assistant that uses AI to interact
-                with
-                customers and help them with various banking tasks, from checking balances to paying bills. It's like
-                having
-                a personal banker available 24/7.
-                <br />but not professional right now soo would be helping banking queries by answering just through
-                text:)
-            </p>
-        </div>
-        <div id="chat-button" class="flex justify-center">
 
-            <a class="relative align-center px-3 py-2 my-10 bg-zinc-400 rounded-md hover:bg-zinc-500"
-                href="/chatpage">Chat
-                now</a>
-        </div>
+    <!-- Hero Section -->
+    <div id="hero-section">
+        <!-- Dynamically show username -->
+        <h1 class="text-2xl font-light">Hi, <%= username %>!</h1>
+        <p class="px-24 my-2 text-lg font-light">
+            I am <%= chatbotName %>, a virtual assistant that uses AI to interact with customers and help with various banking tasks, 
+            from checking balances to paying bills. It's like having a personal banker available 24/7. 
+            <br />
+            However, I'm still learning, so I'll be answering your banking queries through text only for now :)
+        </p>
+    </div>
+
+    <!-- Chat Button -->
+    <div id="chat-button" class="flex justify-center">
+        <a class="relative text-center px-3 py-2 my-10 bg-gray-400 rounded-md hover:bg-gray-600"
+            href="/chatpage">Chat Now</a>
+    </div>
+
 </body>
 
 </html>
