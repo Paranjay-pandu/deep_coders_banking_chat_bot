@@ -1,20 +1,21 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div id="login" class="w-3/6 relative border border-black rounded-xl h-1/2 top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex">
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div id="login" class="w-3/6 relative border border-black rounded-xl h-1/2 flex overflow-hidden shadow-lg">
         <img class="object-cover brightness-75 h-full relative left-0 rounded-l-xl w-2/5" src="https://images.unsplash.com/photo-1659018966820-de07c94e0d01?q=80&w=1798&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="no image" id="bg">
-        <form action="POST" class="realtive flex flex-col left-1/3 w-full h-full items-center justify-center">
-            <h1 class="my-3 text-2xl text-semibold text-center">LOGIN</h1>
-            <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1" type="email" placeholder="Enter your email" name="email" required>
-            <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1" type="password" placeholder="Enter your password" name="pass" required>
-            <input class="bg-neutral-600 py-1 px-4 hover:bg-zinc-800 hover:text-zinc-100 rounded-md mt-3" type="submit" name="submit" id="submit" value="Sign in">
-            <span class="text-sm">Don't have an account?</span>
-            <a href="/register" class="text-xs underline">Register</a>
+        <form method="POST" action="/login" class="flex flex-col w-3/5 h-full items-center justify-center bg-white px-8">
+            <h1 class="my-3 text-2xl font-semibold text-center text-gray-800">LOGIN</h1>
+            <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="email" placeholder="Enter your email" name="email" required>
+            <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="password" placeholder="Enter your password" name="pass" required>
+            <input class="w-full bg-neutral-600 py-2 px-4 hover:bg-zinc-800 hover:text-zinc-100 rounded-md mt-4 cursor-pointer transition duration-300" type="submit" name="submit" id="submit" value="Sign in">
+            <span class="text-sm mt-4 text-gray-600">Don't have an account?</span>
+            <a href="/register" class="text-sm underline text-blue-600 hover:text-blue-800">Register</a>
         </form>
     </div>
 </body>

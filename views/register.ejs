@@ -1,85 +1,63 @@
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Function to show the next part of the form
         function showNextForm() {
-            document.getElementById('initial-form').style.display = 'none'; // Hide the first part
-            document.getElementById('next-form').style.display = 'flex'; // Show the second part
+            document.getElementById('initial-form').classList.add('hidden');
+            document.getElementById('next-form').classList.remove('hidden');
         }
-
-        // Function to show the previous part of the form
         function showPreviousForm() {
-            document.getElementById('initial-form').style.display = 'flex'; // Show the first part
-            document.getElementById('next-form').style.display = 'none'; // Hide the second part
+            document.getElementById('initial-form').classList.remove('hidden');
+            document.getElementById('next-form').classList.add('hidden');
         }
     </script>
 </head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div id="register" class="w-3/6 relative border border-black rounded-xl h-4/5 flex overflow-hidden shadow-lg">
+        <form method="POST" action="/register" class="flex flex-col w-3/5 h-full items-center justify-center bg-white px-8">
+            <h1 class="my-3 text-2xl font-semibold text-center text-gray-800">REGISTER</h1>
 
-<body>
-    <div id="login"
-        class="w-3/6 relative border border-black rounded-xl h-1/2 top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex">
-        <form method="POST" class="relative flex flex-col left-0 w-full min-h-full items-center justify-center">
-            <h1 class="my-3 text-2xl font-semibold text-center">REGISTER</h1>
+            <div id="initial-form" class="w-full flex flex-col items-center">
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="text" placeholder="Enter your full name" name="name" required>
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="email" placeholder="Enter your email" name="email" required>
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="tel" placeholder="+91 XXXXXXXXXX" name="no" required>
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="text" placeholder="Enter your bank acc no." name="bank_no" required>
 
-            <div id="initial-form" class="w-full flex flex-col items-center relative">
-                <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1"
-                    type="text" placeholder="Enter your full name" name="name" required>
-                <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1"
-                    type="email" placeholder="Enter your email" name="email" required>
-                <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1"
-                    type="tel" placeholder="+91 XXXXXXXXXX" name="no" required>
-                <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1"
-                    type="text" placeholder="Enter your bank acc no." name="bank_no" required>
-
-                <div id="creditcard" class="flex gap-2 items-center">
-                    <label for="credit" class="text-center">Do you have a credit card?</label>
-
+                <div id="creditcard" class="flex gap-2 items-center my-2">
+                    <label for="credit" class="text-center text-gray-700">Do you have a credit card?</label>
                     <input type="radio" id="credit-yes" name="credit" value="yes" required>
-                    <label for="credit-yes">Yes</label>
+                    <label for="credit-yes" class="text-gray-700">Yes</label>
                     <input type="radio" id="credit-no" name="credit" value="no" required>
-                    <label for="credit-no">No</label>
+                    <label for="credit-no" class="text-gray-700">No</label>
                 </div>
 
-                <div id="debitcard" class="flex gap-2 items-center">
-                    <label for="debit" class="text-center">Do you have a debit card?</label>
+                <div id="debitcard" class="flex gap-2 items-center my-2">
+                    <label for="debit" class="text-center text-gray-700">Do you have a debit card?</label>
                     <input type="radio" id="debit-yes" name="debit" value="yes" required>
-                    <label for="debit-yes">Yes</label>
+                    <label for="debit-yes" class="text-gray-700">Yes</label>
                     <input type="radio" id="debit-no" name="debit" value="no" required>
-                    <label for="debit-no">No</label>
+                    <label for="debit-no" class="text-gray-700">No</label>
                 </div>
 
-                <input
-                    class="bg-neutral-600 py-1 px-3 hover:bg-zinc-800 hover:text-zinc-100 rounded-md my-1 cursor-pointer"
-                    type="button" name="next" id="next" value="Next" onclick="showNextForm()">
+                <button type="button" class="w-full bg-neutral-600 py-2 px-4 hover:bg-zinc-800 hover:text-zinc-100 rounded-md mt-4 cursor-pointer transition duration-300" onclick="showNextForm()">Next</button>
             </div>
 
             <div id="next-form" class="w-full flex-col items-center justify-center hidden">
-                <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1"
-                    type="password" placeholder="Enter your password" name="password" required>
-                <input class="w-2/3 rounded-md outline-none bg-neutral-600 text-zinc-300 block my-1 px-2 py-1"
-                    type="password" placeholder="Confirm your password" name="confirm_password" required>
-                <div class="flex justify-between w-2/3 my-3">
-                    <input
-                        class="bg-neutral-600 py-1 px-3 hover:bg-zinc-800 hover:text-zinc-100 rounded-md cursor-pointer"
-                        type="button" value="Back" onclick="showPreviousForm()">
-                    <input
-                        class="bg-neutral-600 py-1 px-3 hover:bg-zinc-800 hover:text-zinc-100 rounded-md cursor-pointer"
-                        type="submit" name="register" id="register" value="Submit">
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="password" placeholder="Enter your password" name="password" required>
+                <input class="w-full rounded-md outline-none bg-neutral-600 text-zinc-300 block my-2 px-4 py-2" type="password" placeholder="Confirm your password" name="confirm_password" required>
+                <div class="flex justify-between w-full my-3">
+                    <button type="button" class="bg-neutral-600 py-2 px-4 hover:bg-zinc-800 hover:text-zinc-100 rounded-md cursor-pointer transition duration-300" onclick="showPreviousForm()">Back</button>
+                    <input type="submit" name="register" id="register" value="Submit" class="bg-neutral-600 py-2 px-4 hover:bg-zinc-800 hover:text-zinc-100 rounded-md cursor-pointer transition duration-300">
                 </div>
             </div>
-            <span class="text-sm">Have an account?</span>
-            <a href="/login" class="text-xs underline">Login</a>
+            <span class="text-sm mt-4 text-gray-600">Have an account?</span>
+            <a href="/login" class="text-sm underline text-blue-600 hover:text-blue-800">Login</a>
         </form>
-
-        <img class="object-cover brightness-75 h-full relative right-0 rounded-r-xl w-2/5"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZp6cRX3DjPi_OSO6z_mA_wR3kVYQCtSurOA&s"
-            alt="no image" id="bg">
+        <img class="object-cover brightness-75 h-full relative right-0 rounded-r-xl w-2/5" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZp6cRX3DjPi_OSO6z_mA_wR3kVYQCtSurOA&s" alt="no image" id="bg">
     </div>
 </body>
-
 </html>

@@ -1,10 +1,43 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Chat History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <%- include("header.ejs") %>
+<body class="bg-gray-100 min-h-screen">
+    <%- include("header") %>
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-semibold text-center mb-8 text-gray-800">Chat History</h1>
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <% if (chatSessions.length === 0) { %>
+                <p class="text-center text-gray-600">No chat history found.</p>
+            <% } else { %>
+                <ul class="space-y-4">
+                    <% chatSessions.forEach(session => { %>
+                        <li class="border-b border-gray-200 pb-4 last:border-b-0">
+                            <a href="/history/<%= session._id %>" class="block hover:bg-gray-50 rounded-lg p-4 transition duration-150 ease-in-out">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-medium text-gray-800">
+                                        Chat Session <%= session._id.toString().slice(-6) %>
+                                    </span>
+                                    <span class="text-sm text-gray-500">
+                                        <%= new Date(session.startTime).toLocaleString() %>
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 mt-2">
+                                    Duration: <%= ((session.endTime || new Date()) - session.startTime) / 60000 %> minutes
+                                </p>
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } %>
+        </div>
+        <div class="mt-8 text-center">
+            <a href="/chatpage" class="bg-neutral-600 text-zinc-300 px-6 py-3 rounded-md hover:bg-zinc-800 transition duration-150 ease-in-out">Start New Chat</a>
+        </div>
+    </div>
 </body>
 </html>

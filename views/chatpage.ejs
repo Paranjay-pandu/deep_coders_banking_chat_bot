@@ -17,24 +17,41 @@
             </div>
         </form>
     </div>
-
+    
     <script>
         const chatMessages = document.getElementById('chat-messages');
         const chatForm = document.getElementById('chat-form');
         const userInput = document.getElementById('user-input');
-
+        const sessionId = '<%= sessionId %>'; // Assume this is passed from the server
+    
         chatForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const message = userInput.value.trim();
             if (message) {
-                addMessage('You', message);
+                sendMessage(message);
                 userInput.value = '';
-                setTimeout(() => {
-                    addMessage('Bot', ` ${message}`);
-                }, 1000);
             }
         });
-
+    
+        async function sendMessage(message) {
+            addMessage('You', message);
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message, sessionId }),
+                });
+                const data = await response.json();
+                if (data.success) {
+                    addMessage('Bot', data.response);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    
         function addMessage(sender, text) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `p-2 rounded-lg ${sender === 'You' ? 'bg-neutral-600 text-zinc-300 ml-auto' : 'bg-gray-200 text-gray-800'}`;
@@ -43,6 +60,17 @@
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+    
+        // End chat session when leaving the page
+        window.addEventListener('beforeunload', async () => {
+            await fetch('/end-chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sessionId }),
+            });
+        });
     </script>
 </body>
 </html>
